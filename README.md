@@ -1,4 +1,4 @@
-🛍️ LojaQA — Automação de Testes E2E (UI) e API REST
+# 🛍️ LojaQA — Automação de Testes E2E (UI) e API REST
 
 **Módulo:** Lojista — CRUD de Produtos & Padrão Teardown  
 **Stack:** Playwright + TypeScript  
