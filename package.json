@@ -1,0 +1,32 @@
+{
+  "name": "lojaqa-automacao-banca",
+  "version": "1.0.0",
+  "description": "Suíte de Testes Automatizados E2E (UI) e API com Playwright + TypeScript — Módulo Lojista: CRUD de Produtos & Teardown (LojaQA FAP 2026)",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:banca": "playwright test --headed",
+    "test:e2e": "playwright test tests/e2e --headed",
+    "test:api": "playwright test tests/api",
+    "test:lojaqa": "playwright test tests/e2e/lojaqa-modulo-lojista.spec.ts tests/api/lojaqa-api-lojista.spec.ts --headed",
+    "test:externos": "playwright test tests/e2e/externo-e2e.spec.ts tests/api/externo-api.spec.ts --headed",
+    "typecheck": "tsc --noEmit",
+    "report": "playwright show-report"
+  },
+  "keywords": [
+    "playwright",
+    "typescript",
+    "qa",
+    "e2e",
+    "api-testing",
+    "page-object-model",
+    "lojaqa",
+    "fap2026"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "@types/node": "^22.13.10",
+    "typescript": "^5.8.2"
+  }
+}
