@@ -96,14 +96,20 @@ npm run test:e2e
 # Executar apenas os testes de API REST ({ request }) exibindo logs detalhados no console
 npm run test:api
 
-# Executar apenas os testes da LojaQA (E2E + API) com navegador visível
-npm run test:lojaqa
-
-# Executar apenas os testes externos (SauceDemo E2E + DummyJSON API) com navegador visível
-npm run test:externos
-
 # Executar em modo headless padrão (CI / validação rápida)
 npm test
+
+# Executar com Modo UI interativo: abre painel visual para executar qualquer teste no clique e ver a timeline
+npm run test:ui
+
+# Executar apenas um arquivo .spec.ts específico pelo caminho
+npx playwright test tests/e2e/lojaQA-mlojista.spec.ts --headed
+
+# Executar um único teste filtrando pelo ID da matriz
+npx playwright test -g "E2E-02" --headed
+
+# Executar um único teste filtrando por um trecho do título em test('...')
+npx playwright test -g "editar estoque" --headed
 
 # Validar tipagem estática do TypeScript
 npm run typecheck
@@ -118,15 +124,15 @@ npm run report
 
 | ID | Arquivo Spec | Cenário | Tipo | Resultado Esperado |
 |---|---|---|---|---|
-| **CT-E2E-01** | `lojaqa-modulo-lojista.spec.ts` | Iniciar autenticado via `auth.fixture` na área restrita e realizar `logout()` seguro | E2E (UI) | Inicia em `painel.html` sem digitar credenciais no teste; valida título, badge `SELLER` e usuário; após `logout()`, retorna a `loja.html` sem token no `localStorage`. |
-| **CT-E2E-02** | `lojaqa-modulo-lojista.spec.ts` | Cadastrar produto na loja, editar estoque (10 → 25 un) e excluir na tabela gerencial | E2E (UI) | Produto é criado, exibe estoque atualizado (`25 un`) na tabela gerencial e é excluído fisicamente após confirmação no diálogo nativo (HTTP `200`). |
-| **CT-E2E-03** | `lojaqa-modulo-lojista.spec.ts` | **[Negativo]** Tentar excluir produto oficial do *Seed* na tabela gerencial | E2E (UI) | API responde `403 Forbidden`, painel exibe mensagem de bloqueio anti-caos e o item *Teclado Mecânico Aurora RGB* permanece visível. |
-| **CT-API-01** | `lojaqa-api-lojista.spec.ts` | Padrão Teardown completo: `POST` cria, `GET` valida persistência e `DELETE` remove | API REST | `201 Created` na criação, `200 OK` na listagem confirmando o `_id` criado e `200 OK` na exclusão física garantida em bloco `finally`. |
-| **CT-API-02** | `lojaqa-api-lojista.spec.ts` | **[Trava 403]** Tentar deletar produto oficial do *Seed* via `DELETE /seller/products/:id` | API REST | Retorna `403 Forbidden`, header `application/json` e erro `"Proibido: produtos padrão do catálogo oficial não podem ser excluídos."`. |
-| **CT-API-03** | `lojaqa-api-lojista.spec.ts` | **[Negativo 400]** Cadastrar produto com payload inválido (preço negativo `-10`) | API REST | Retorna `400 Bad Request` e mensagem `"Nome, categoria, preço e estoque válidos são obrigatórios."`. |
-| **CT-API-04** | `lojaqa-api-lojista.spec.ts` | **[Negativo 400]** Deletar produto informando ObjectId malformado (`id_invalido_123`) | API REST | Retorna `400 Bad Request` e mensagem `"ID de produto inválido."`. |
-| **CT-EXT-E2E-01** | `externo-e2e.spec.ts` | Autenticar, adicionar item ao carrinho e finalizar checkout no **SauceDemo** | E2E Externo | Conclui jornada de compra em `checkout-complete.html` exibindo `"Thank you for your order!"`. |
-| **CT-EXT-API-01** | `externo-api.spec.ts` | Cadastrar produto simulado em `POST /products/add` na **DummyJSON** | API Externa | Retorna `201 Created`, header `application/json` e payload contendo `id` numérico e dados enviados. |
+| **CT-E2E-01** | `lojaQA-mlojista.spec.ts` | Iniciar autenticado via `auth.fixture` na área restrita e realizar `logout()` seguro | E2E (UI) | Inicia em `painel.html` sem digitar credenciais no teste; valida título, badge `SELLER` e usuário; após `logout()`, retorna a `loja.html` sem token no `localStorage`. |
+| **CT-E2E-02** | `lojaQA-mlojista.spec.ts` | Cadastrar produto na loja, editar estoque (10 → 25 un) e excluir na tabela gerencial | E2E (UI) | Produto é criado, exibe estoque atualizado (`25 un`) na tabela gerencial e é excluído fisicamente após confirmação no diálogo nativo (HTTP `200`). |
+| **CT-E2E-03** | `lojaQA-mlojista.spec.ts` | **[Negativo]** Tentar excluir produto oficial do *Seed* na tabela gerencial | E2E (UI) | API responde `403 Forbidden`, painel exibe mensagem de bloqueio anti-caos e o item *Teclado Mecânico Aurora RGB* permanece visível. |
+| **CT-API-01** | `lojaQA-apilojista.spec.ts` | Padrão Teardown completo: `POST` cria, `GET` valida persistência e `DELETE` remove | API REST | `201 Created` na criação, `200 OK` na listagem confirmando o `_id` criado e `200 OK` na exclusão física garantida em bloco `finally`. |
+| **CT-API-02** | `lojaQA-apilojista.spec.ts` | **[Trava 403]** Tentar deletar produto oficial do *Seed* via `DELETE /seller/products/:id` | API REST | Retorna `403 Forbidden`, header `application/json` e erro `"Proibido: produtos padrão do catálogo oficial não podem ser excluídos."`. |
+| **CT-API-03** | `lojaQA-apilojista.spec.ts` | **[Negativo 400]** Cadastrar produto com payload inválido (preço negativo `-10`) | API REST | Retorna `400 Bad Request` e mensagem `"Nome, categoria, preço e estoque válidos são obrigatórios."`. |
+| **CT-API-04** | `lojaQA-apilojista.spec.ts` | **[Negativo 400]** Deletar produto informando ObjectId malformado (`id_invalido_123`) | API REST | Retorna `400 Bad Request` e mensagem `"ID de produto inválido."`. |
+| **CT-EXT-E2E-01** | `saucedemo.spec.ts` | Autenticar, adicionar item ao carrinho e finalizar checkout no **SauceDemo** | E2E Externo | Conclui jornada de compra em `checkout-complete.html` exibindo `"Thank you for your order!"`. |
+| **CT-EXT-API-01** | `dummyjson.spec.ts` | Cadastrar produto simulado em `POST /products/add` na **DummyJSON** | API Externa | Retorna `201 Created`, header `application/json` e payload contendo `id` numérico e dados enviados. |
 
 ---
 
