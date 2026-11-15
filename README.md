@@ -42,11 +42,11 @@ lojaqa-automacao-banca/
 │   └── auth.fixture.ts                 # Fixture autenticada (test.extend<{ lojistaPage: LojistaPage }>)
 ├── tests/
 │   ├── e2e/
-│   │   ├── lojaQA-mlojista.spec.ts  # 3 CTs E2E do módulo Lojista na LojaQA
-│   │   └── saucedemo.spec.ts            # 1 CT E2E completo no SauceDemo
+│   │   ├── lojaQA-mlojista.spec.ts     # 3 CTs E2E do módulo Lojista na LojaQA
+│   │   └── saucedemo.spec.ts           # 1 CT E2E completo no SauceDemo
 │   └── api/
-│       ├── lojaQA-apilojista.spec.ts     # 4 CTs de API da LojaQA ({ request })
-│       └── dummyjson.spec.ts            # 1 CT de API na DummyJSON ({ request })
+│       ├── lojaQA-apilojista.spec.ts   # 4 CTs de API da LojaQA ({ request })
+│       └── dummyjson.spec.ts           # 1 CT de API na DummyJSON ({ request })
 ├── docs/
 │   └── evidencias/                     # Capturas de tela reais da execução dos testes
 │   └── presentation/                   
