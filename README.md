@@ -194,4 +194,4 @@ npm run report
 ## 📊 7. Apresentação de Slides
 
 Os slides preparados para apresentação à banca encontram-se em:
-- [`presentation/apresentacao-slides.pdf`](docs/presentation/apresentacao-slides.pdf)
+- [`docs/presentation/apresentacao-slides.pdf`](docs/presentation/apresentacao-slides.pdf)
