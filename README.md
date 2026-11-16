@@ -1,4 +1,4 @@
-# 🛍️ LojaQA — Automação de Testes E2E (UI) e API REST
+# LojaQA — Automação de Testes E2E (UI) e API REST
 
 **Módulo:** Lojista — CRUD de Produtos & Padrão Teardown  
 **Stack:** Playwright + TypeScript  
@@ -6,7 +6,7 @@
 
 ---
 
-## 📌 1. Visão Geral e Contexto de Negócio
+## 1. Visão Geral e Contexto de Negócio
 
 Este repositório contém a suíte automatizada de testes **End-to-End (Interface Gráfica)** e **Testes de Contrato/API REST** desenvolvida para o módulo **Painel do Lojista: CRUD de Produtos & Teardown** da plataforma **LojaQA E-commerce Marketplace**, além de cenários complementares em ambientes públicos externos (**SauceDemo** e **DummyJSON**).
 
@@ -20,7 +20,7 @@ Este repositório contém a suíte automatizada de testes **End-to-End (Interfac
 
 ---
 
-## 🌐 2. Ambientes Utilizados
+## 2. Ambientes Utilizados
 
 | Camada / Serviço | URL Oficial | Finalidade na Suíte |
 |---|---|---|
@@ -31,7 +31,7 @@ Este repositório contém a suíte automatizada de testes **End-to-End (Interfac
 
 ---
 
-## 🗂️ 3. Estrutura do Repositório e Arquitetura
+## 3. Estrutura do Repositório e Arquitetura
 
 ```text
 lojaqa-automacao-banca/
@@ -70,7 +70,7 @@ lojaqa-automacao-banca/
 
 ---
 
-## 🚀 4. Como Instalar e Executar
+## 4. Como Instalar e Executar
 
 ### Pré-requisitos
 - **Node.js** 18+ instalado (`node -v`)
@@ -81,13 +81,13 @@ Dentro da pasta `lojaqa-automacao-banca/`:
 
 ```bash
 npm install
-npx playwright install chromium
+npx playwright install --with-deps chromium
 ```
 
 ### Passo 2 — Comandos de Execução
 
 ```bash
-# Executar TODA a suíte com navegador visível (--headed) — Ideal para apresentação à banca
+# Executar TODA a suíte com navegador visível (--headed)
 npm run test:headed
 
 # Executar apenas os testes E2E (UI) com navegador visível (--headed)
@@ -120,7 +120,7 @@ npm run report
 
 ---
 
-## 🧪 5. Matriz de Testes (9 Cenários Automatizados)
+## 5. Matriz de Testes (9 Cenários Automatizados)
 
 | ID | Arquivo Spec | Cenário | Tipo | Resultado Esperado |
 |---|---|---|---|---|
@@ -136,7 +136,7 @@ npm run report
 
 ---
 
-## 📸 6. Evidências Reais de Execução (Prints & Console)
+## 6. Evidências Reais de Execução (Prints & Console)
 
 ### 6.1 Relatório HTML Oficial do Playwright (`9 passed`)
 ![Relatório HTML Playwright](docs/evidencias/05-relatorio-html-playwright.png)
@@ -197,7 +197,7 @@ npm run report
 
 ---
 
-## 📊 7. Apresentação de Slides
+## 7. Apresentação de Slides
 
 Os slides preparados para apresentação à banca encontram-se em:
 - [`docs/presentation/apresentacao-slides.pdf`](docs/presentation/apresentacao-slides.pdf)
