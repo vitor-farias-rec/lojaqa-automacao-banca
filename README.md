@@ -64,8 +64,7 @@ lojaqa-automacao-banca/
 │   │   ├── 05-diario-pe-busca.png
 │   │   └── 06-diario-pe-materia-busca.png
 │   └── presentation/                    # Slides da banca (11 slides) em .pptx e .pdf
-│       ├── apresentacao-lojaqa-automacao-banca.pptx
-│       └── apresentacao-lojaqa-automacao-banca.pdf
+│       └── apresentacao-lojaqa-automacao-banca.pptx
 ├── fixtures/
 │   └── auth.fixture.ts                  # Fixtures: clientePage, tokenCliente e pedidosDoCliente
 ├── pages/
@@ -398,4 +397,3 @@ Os slides ficam em `docs/presentation/` e cobrem os quatro blocos pedidos:
 | Conclusão & repositório | 9 (resultados e evidências), 10 (lições e boas práticas) e 11 (como executar) |
 
 - `apresentacao-lojaqa-automacao-banca.pptx` — arquivo editável (PowerPoint / Google Slides / LibreOffice Impress).
-- `apresentacao-lojaqa-automacao-banca.pdf` — mesma versão em PDF, para projetar sem depender de fontes instaladas.
