@@ -70,8 +70,6 @@ lojaqa-automacao-banca/
 ├── pages/
 │   ├── ClientePage.ts                   # Page Object do módulo Pedidos & Rastreio (SEM asserções)
 │   └── DiarioPage.ts                    # Page Object do portal Diario de Pernambuco (SEM asserções)
-├── scripts/
-│   └── capturar-evidencias.mjs          # Gera as evidências (prints + PDF) a partir da aplicação real
 ├── tests/
 │   ├── e2e/
 │   │   ├── lojaQA-mcliente.spec.ts      # 4 CTs E2E do Painel do Cliente (listagem, rastreio, impressão)
@@ -174,9 +172,6 @@ npm run typecheck
 
 # Abrir o relatório visual HTML gerado pelo Playwright
 npm run report
-
-# Regenerar as evidências (prints + PDF) a partir da aplicação real
-npm run evidencias
 ```
 
 ### Câmera lenta: ver a automação acontecendo
@@ -242,7 +237,7 @@ Pontos importantes:
 
 ## 6. Evidências Reais de Execução (Prints & Console)
 
-Todas as imagens abaixo foram capturadas da aplicação real em produção por `npm run evidencias`.
+Todas as imagens abaixo foram capturadas da aplicação real em produção durante a execução da suíte.
 
 ### 6.1 Listagem de pedidos do cliente autenticado (`CT-E2E-CL-01`)
 ![Listagem de Pedidos do Cliente](docs/evidencias/01-painel-cliente-meus-pedidos.png)

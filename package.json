@@ -15,7 +15,6 @@
     "test:contrato": "playwright test tests/api/lojaQA-apicliente.spec.ts",
     "test:diario": "playwright test tests/e2e/diariodepernambuco.spec.ts --headed",
     "test:externos": "playwright test tests/e2e/diariodepernambuco.spec.ts tests/api/dummyjson.spec.ts",
-    "evidencias": "node scripts/capturar-evidencias.mjs",
     "typecheck": "tsc --noEmit",
     "report": "playwright show-report"
   },
