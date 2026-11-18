@@ -1,15 +1,21 @@
 {
   "name": "lojaqa-automacao-banca",
-  "version": "1.0.0",
-  "description": "Suíte de Testes Automatizados E2E (UI) e API com Playwright + TypeScript — Módulo Lojista: CRUD de Produtos & Teardown (LojaQA FAP 2026)",
+  "version": "2.0.0",
+  "description": "Suíte de Testes Automatizados E2E (UI) e API REST com Playwright + TypeScript — Módulo Painel do Cliente: Pedidos & Rastreio (LojaQA FAP 2026) + cenários externos (Diario de Pernambuco / DummyJSON)",
   "scripts": {
     "test": "playwright test",
     "test:headed": "playwright test --headed",
+    "test:lento": "SLOW_MO=1000 playwright test tests/e2e/lojaQA-mcliente.spec.ts --headed",
+    "test:lento:tudo": "SLOW_MO=1000 playwright test --headed",
     "test:banca": "playwright test --headed",
     "test:e2e": "playwright test tests/e2e --headed",
     "test:api": "playwright test tests/api",
-    "test:lojaqa": "playwright test tests/e2e/lojaqa-modulo-lojista.spec.ts tests/api/lojaqa-api-lojista.spec.ts --headed",
-    "test:externos": "playwright test tests/e2e/externo-e2e.spec.ts tests/api/externo-api.spec.ts --headed",
+    "test:lojaqa": "playwright test tests/e2e/lojaQA-mcliente.spec.ts tests/api/lojaQA-apicliente.spec.ts",
+    "test:pedidos": "playwright test tests/e2e/lojaQA-mcliente.spec.ts --headed",
+    "test:contrato": "playwright test tests/api/lojaQA-apicliente.spec.ts",
+    "test:diario": "playwright test tests/e2e/diariodepernambuco.spec.ts --headed",
+    "test:externos": "playwright test tests/e2e/diariodepernambuco.spec.ts tests/api/dummyjson.spec.ts",
+    "evidencias": "node scripts/capturar-evidencias.mjs",
     "typecheck": "tsc --noEmit",
     "report": "playwright show-report"
   },
@@ -21,7 +27,11 @@
     "api-testing",
     "page-object-model",
     "lojaqa",
-    "fap2026"
+    "pedidos",
+    "rastreio",
+    "fap2026",
+    "jornalismo",
+    "diario-de-pernambuco"
   ],
   "license": "MIT",
   "devDependencies": {

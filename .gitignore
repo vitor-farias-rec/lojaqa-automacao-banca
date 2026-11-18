@@ -1,5 +1,19 @@
+# Dependências e artefatos gerados
 node_modules/
+package-lock.json.bak
+
+# Relatórios e resultados do Playwright
 playwright-report/
 test-results/
 blob-report/
+playwright/.cache/
+
+# Sistema operacional / editores
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Variáveis de ambiente locais
 .env
+.env.local
