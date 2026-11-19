@@ -55,30 +55,22 @@ Criar massa de pedido em cada execução, portanto, **poluiria o banco compartil
 ```text
 lojaqa-automacao-banca/
 ├── docs/
-│   ├── evidencias/                      # Capturas reais da execução (prints + PDF do comprovante)
-│   │   ├── 01-painel-cliente-meus-pedidos.png
-│   │   ├── 02-timeline-rastreio-stepper.png
-│   │   ├── 03-impressao-comprovante.png
-│   │   ├── 04-comprovante-pedido.pdf
-│   │   ├── 05-diario-pe-busca.png
-│   │   └── 06-diario-pe-materia-busca.png
-│   └── presentation/                    # Slides da banca (11 slides) em .pptx e .pdf
-│       └── apresentacao-lojaqa-automacao-banca.pptx
+│   ├── evidencias/                      # Capturas reais da execução
+│   └── presentation/                    # Slides da banca (10 slides) em .pptx
 ├── fixtures/
-│   └── auth.fixture.ts                  # Fixtures: clientePage, tokenCliente e pedidosDoCliente
 ├── pages/
-│   ├── ClientePage.ts                   # Page Object do módulo Pedidos & Rastreio (SEM asserções)
-│   └── DiarioPage.ts                    # Page Object do portal Diario de Pernambuco (SEM asserções)
+│   ├── ClientePage.ts                   # Page Object (SEM Asserts)
+│   └── DiarioPage.ts                    # Page Object (SEM Asserts)
 ├── tests/
 │   ├── e2e/
-│   │   ├── lojaQA-mcliente.spec.ts      # 4 CTs E2E do Painel do Cliente (listagem, rastreio, impressão)
-│   │   └── diariodepernambuco.spec.ts   # 1 CT E2E no Diario de Pernambuco (busca de conteúdo)
+│   │   ├── lojaQA-mcliente.spec.ts      # 4 CTs E2E do Painel do Cliente
+│   │   └── diariodepernambuco.spec.ts   # 1 CT E2E no Diario de Pernambuco
 │   └── api/
-│       ├── lojaQA-apicliente.spec.ts    # 2 CTs de API de GET /orders/me ({ request })
-│       └── dummyjson.spec.ts            # 1 CT de API na DummyJSON ({ request })
+│       ├── lojaQA-apicliente.spec.ts    # 2 CTs de API de GET /orders/me
+│       └── dummyjson.spec.ts            # 1 CT de API na DummyJSON
 ├── .gitignore                           # Arquivos e pastas ignorados pelo Git
-├── README.md                            # Documentação completa de uso e evidências
-├── package-lock.json                    # Versões exatas das dependências instaladas
+├── README.md                            # Documentação completa e evidências
+├── package-lock.json                    # Versões exatas das dependências
 ├── package.json                         # Scripts e dependências do projeto
 ├── playwright.config.ts                 # Configuração global do Playwright
 └── tsconfig.json                        # Tipagem estrita do TypeScript
