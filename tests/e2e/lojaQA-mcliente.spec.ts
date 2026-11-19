@@ -244,6 +244,7 @@ test.describe('Painel do Cliente (E2E UI) — Pedidos, Rastreio & Comprovante', 
   );
 
   test('CT-E2E-CL-04: Deve imprimir o comprovante do pedido com os dados do registro e manter o modal aberto', async ({
+    page,
     clientePage,
     pedidosDoCliente,
   }) => {
@@ -290,8 +291,24 @@ test.describe('Painel do Cliente (E2E UI) — Pedidos, Rastreio & Comprovante', 
     await expect(clientePage.botaoFecharModal).toBeEnabled();
 
     // 6. Emulação de mídia de impressão: o comprovante permanece íntegro
-    //    (equivalente a "Visualizar impressão" no navegador)
     await clientePage.emularMidiaDeImpressao();
+    // Evidência POR EXECUÇÃO: anexada ao relatório HTML, sem sobrescrever docs/evidencias/
+    await test.step('Anexar comprovante impresso ao relatório', async () => {
+      const comprovante = await clientePage.modalDetalhesPedido.screenshot();
+      await test.info().attach('comprovante-impressao.png', {
+        body: comprovante,
+        contentType: 'image/png',
+      });
+
+      // page.pdf() só existe em Chromium headless: a guarda mantém o --headed funcionando
+      if (test.info().project.use.headless !== false) {
+        const pdf = await page.pdf({ format: 'A4', printBackground: true });
+        await test.info().attach('comprovante-pedido.pdf', {
+          body: pdf,
+          contentType: 'application/pdf',
+        });
+      }
+    });
     await expect(clientePage.modalDetalhesPedido).toBeVisible();
     await expect(clientePage.tituloPedidoModal).toBeVisible();
     await expect(clientePage.totalPagoModal).toBeVisible();
