@@ -13,9 +13,8 @@ Este repositório contém a suíte automatizada de testes **End-to-End (Interfac
 ### Por que este módulo é crítico para a LojaQA?
 
 1. **Confiança pós-compra (Pós-venda):** após concluir o checkout, o cliente só tem certeza de que a compra existe por meio do histórico de pedidos. Se a listagem não carregar, exibir valor errado ou omitir um pedido, o cliente abre reclamação, cancela no cartão e a plataforma perde receita e reputação.
-2. **Transparência logística (Rastreio):** a timeline de rastreio (*stepper*) é o único canal de acompanhamento do pedido. Quando o status visual divergir do status real do registro, o suporte recebe chamados indevidos e o SLA de entrega passa a ser questionado.
-3. **Comprovação documental (Impressão):** o comprovante impresso é usado pelo cliente em garantia, reembolso e disputa com o cartão. O documento precisa refletir **exatamente** o pedido selecionado (ID, itens, endereço e total pago).
-4. **Segurança e Isolamento Multi-Tenancy (RBAC):** `GET /api/orders/me` só pode devolver os pedidos do próprio titular do token. Um vazamento de histórico entre clientes é incidente de privacidade (LGPD) e a rota também precisa rejeitar requisições anônimas com **`403 Forbidden`** (*fail closed*).
+2. **Comprovação documental (Impressão):** o comprovante impresso é usado pelo cliente em garantia, reembolso e disputa com o cartão. O documento precisa refletir **exatamente** o pedido selecionado (ID, itens, endereço e total pago).
+3. **Segurança e Isolamento Multi-Tenancy (RBAC):** `GET /api/orders/me` só pode devolver os pedidos do próprio titular do token. Um vazamento de histórico entre clientes é incidente de privacidade (LGPD) e a rota também precisa rejeitar requisições anônimas com **`403 Forbidden`** (*fail closed*).
 
 ### Estratégia de massa de dados: testes READ-ONLY e idempotentes
 
@@ -324,6 +323,17 @@ Todas as imagens abaixo foram capturadas da aplicação real em produção duran
 
 ## 7. Achados de QA (registrados durante a automação)
 
+### 7.1 Evidência anexada a cada execução (`CT-E2E-CL-04`)
+
+Os arquivos acima são **estáticos** (versionados e atualizados de propósito). Além deles, o `CT-E2E-CL-04` anexa o comprovante de **cada execução** ao relatório HTML, sem sobrescrever `docs/evidencias/`:
+
+- `comprovante-impressao.png` — print do modal em mídia de impressão;
+- `comprovante-pedido.pdf` — PDF gerado pela página (somente em execução headless).
+
+Para ver: `npm run report` → cenário `CT-E2E-CL-04` → seção **Attachments**. Cada execução gera anexos próprios, com data e hash — é a prova de que aquela rodada disparou `window.print()`.
+
+---
+
 ### BUG-01 — Timeline de rastreio não reconhece o status `delivered` (defeito funcional)
 
 - **Severidade:** Média/Alta (informação errada para o cliente).
@@ -333,15 +343,22 @@ Todas as imagens abaixo foram capturadas da aplicação real em produção duran
 - **Causa raiz:** o front-end (`painel.js`) compara o status com literais em português (`statusText === 'ENTREGUE'` / `'ENVIADO'`), enquanto `GET /orders/me` devolve o enum em inglês (`pending|paid|shipped|delivered|cancelled`) definido no contrato `APILOJAQA.YAML`.
 - **Como a suíte trata:** o cenário correto está escrito em `CT-E2E-CL-03` e marcado com `test.fixme` (documenta o defeito sem derrubar o pipeline). Quando o front-end for corrigido, basta remover a chamada de `test.fixme` para o cenário entrar na esteira.
 
+#### Em outras palavras
+
+O pedido já foi entregue e o selo no topo mostra `DELIVERED`, mas a barra de etapas continua parada em **3. Em Preparação** — a mesma tela dá duas informações contraditórias.
+
+**Por quê:** a API devolve o status em inglês (`delivered`), enquanto a tela procura a palavra em português (`'ENTREGUE'`). Como `delivered` nunca é igual a `ENTREGUE`, o código não reconhece o avanço e mantém a etapa padrão.
+
+#### Como corrigir
+
+Traduzir o status antes de comparar, em vez de procurar texto escrito na tela:
+
+```js
+const ETAPA_POR_STATUS = { pending: 3, paid: 3, shipped: 4, delivered: 5, cancelled: 0 };
+
 ### Observação técnica — classe CSS do badge de status
 
 Em `openOrderModal()` o badge recebe `className = 'status blocked'` de forma fixa, independentemente do status. Como não existe regra `.status.blocked` no CSS, **não há impacto visual hoje**, mas a classe é semanticamente incorreta (marcar um pedido aprovado como "blocked"). Não é objeto de asserção: um teste que exigisse essa classe congelaria o defeito.
-
-### Observação técnica — acessibilidade do portal externo (Diario de Pernambuco)
-
-- A busca é delegada ao **Google Programmable Search**: os resultados não têm papel ARIA (`a.gs-title` dentro de `.gsc-webResult`) e cada resultado aparece **duplicado no DOM** (uma célula de snippet oculta) — daí o uso de `filter({ visible: true })` e do fallback documentado em `pages/DiarioPage.ts`.
-- Os resultados abrem com `target="_blank"`; a automação precisa capturar a nova aba (`context().waitForEvent('page')`) em vez de assumir navegação na aba atual.
-- A página legada de busca mistura resultados com widgets de sidebar ("Marcas Preferidas", "Últimas") sem container identificável — por isso o teste ancora no link do resultado (`href` + classe do título), não em um container genérico.
 
 ### Observação técnica — ausência de CSS de impressão
 
@@ -349,7 +366,7 @@ Em `openOrderModal()` o badge recebe `className = 'status blocked'` de forma fix
 
 ---
 
-## 8. Decisões de Projeto (defensáveis na banca)
+## 8. Decisões de Projeto
 
 | Decisão | Justificativa |
 |---|---|
@@ -362,33 +379,3 @@ Em `openOrderModal()` o badge recebe `className = 'status blocked'` de forma fix
 | **Banner de cookies de terceiro tratado como higiene, não como asserção** | O WP Cookie Consent aparece de forma intermitente; `dispensarAvisoDeCookies()` tenta dispensá-lo e, se houver camada residual, remove apenas esse overlay para evitar interceptação de cliques. Nenhum teste depende da existência do banner. |
 | **Resultado da busca aberto em nova aba** | Os resultados do Google Programmable Search usam `target="_blank"`; `abrirResultadoDaBusca()` captura o evento `page` do contexto e devolve um **novo `DiarioPage`** apontando para a aba da matéria, sem `promise` solta no spec. |
 | **Asserções somente nos specs** | Regra do POM puro: `pages/` só mapeia e age; `fixtures/` só prepara (falha rápido com `throw`); `tests/` julga. |
-
----
-
-## 9. Escopo: substituição do módulo anterior
-
-Conforme solicitado, o escopo da LojaQA foi **migrado do Painel do Lojista (CRUD de Produtos & Teardown)** para o **Painel do Cliente (Pedidos & Rastreio)**:
-
-| Arquivo anterior | Situação |
-|---|---|
-| `pages/LojistaPage.ts` | removido (substituído por `pages/ClientePage.ts`) |
-| `tests/e2e/lojaQA-mlojista.spec.ts` | removido (substituído por `tests/e2e/lojaQA-mcliente.spec.ts`) |
-| `tests/api/lojaQA-apilojista.spec.ts` | removido (substituído por `tests/api/lojaQA-apicliente.spec.ts`) |
-| `pages/SauceDemoPage.ts`, `tests/e2e/saucedemo.spec.ts` | removidos (substituídos por `pages/DiarioPage.ts` + `tests/e2e/diariodepernambuco.spec.ts`) |
-| `tests/api/dummyjson.spec.ts` | **mantido** (cenário de API externa complementar) |
-| Cenário E2E de navegação do Diario de Pernambuco (home → editoria → matéria) | removido a pedido; a suíte externa manteve apenas o `CT-EXT-E2E-02` (busca de conteúdo) |
-
----
-
-## 10. Apresentação da banca
-
-Os slides ficam em `docs/presentation/` e cobrem os quatro blocos pedidos:
-
-| Bloco | Slides |
-|---|---|
-| Contexto do módulo | 3 (por que Pedidos & Rastreio é crítico) e 4 (estratégia de dados sem teardown) |
-| Matriz de testes | 5 (8 cenários com ID, cenário, tipo E2E/API e resultado esperado) |
-| Arquitetura da solução | 6 (estrutura de pastas), 7 (Page Objects) e 8 (fixtures) |
-| Conclusão & repositório | 9 (resultados e evidências), 10 (lições e boas práticas) e 11 (como executar) |
-
-- `apresentacao-lojaqa-automacao-banca.pptx` — arquivo editável (PowerPoint / Google Slides / LibreOffice Impress).
