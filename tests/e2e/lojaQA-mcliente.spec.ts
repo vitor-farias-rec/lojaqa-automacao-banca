@@ -5,18 +5,6 @@ import {
   type PedidoApi,
 } from '../../fixtures/auth.fixture';
 
-/**
- * Módulo Painel do Cliente: Pedidos & Rastreio (E2E UI)
- *
- * Estratégia de massa de dados:
- * Os cenários são READ-ONLY e idempotentes — não criam pedidos (POST /orders
- * decrementa estoque real e a API não expõe rota de exclusão de pedidos, o que
- * poluiria permanentemente o banco compartilhado da turma). A massa utilizada é
- * o histórico real do próprio cliente, lido via GET /orders/me pelo fixture
- * `pedidosDoCliente`, que atua como fonte da verdade para as asserções da UI
- * (evitando valores "chumbados" no spec).
- */
-
 /** Rótulos oficiais da timeline de rastreio, na ordem exibida pelo stepper. */
 const PASSOS_RASTREIO = [
   '1. Pedido Criado',
@@ -33,14 +21,7 @@ function formatarMoeda(valor: number): string {
     .replace(/\u00a0/g, ' ');
 }
 
-/**
- * Deriva a expectativa VISUAL (correta) do stepper a partir do status da API.
- *
- * Regra de negócio esperada:
- * - pending/paid ......... passos 1 e 2 concluídos, passo 3 ativo (Em Preparação)
- * - shipped/enviado ...... passos 1 a 3 concluídos, passo 4 ativo (A Caminho)
- * - delivered/entregue ... passos 1 a 5 concluídos, passo 5 ativo (Entregue)
- */
+/** Deriva a expectativa VISUAL (correta) do stepper a partir do status da API. */
 function expectativaDoRastreio(statusApi: string): {
   indiceUltimoConcluido: number;
   indiceAtivo: number;
@@ -112,8 +93,7 @@ test.describe('Painel do Cliente (E2E UI) — Pedidos, Rastreio & Comprovante', 
       );
     }
 
-    // 4. Ordenação: o contrato garante os mais recentes primeiro, logo a primeira
-    //    linha deve ser o pedido com maior createdAt do histórico do cliente.
+    // 4. Ordenação: o contrato garante os mais recentes primeiro
     const pedidoMaisRecente = pedidosDoCliente.reduce((maisRecente, atual) =>
       new Date(atual.createdAt) > new Date(maisRecente.createdAt) ? atual : maisRecente
     );
@@ -201,19 +181,8 @@ test.describe('Painel do Cliente (E2E UI) — Pedidos, Rastreio & Comprovante', 
     await expect(clientePage.modalDetalhesPedido).toBeHidden();
   });
 
-  /**
-   * DEFEITO CONHECIDO (BUG-01) — registrado com test.fixme para não travar o pipeline.
-   *
-   * A timeline de rastreio do front-end compara o status do pedido com os literais
-   * em português "ENTREGUE"/"ENVIADO", porém GET /orders/me devolve o enum em inglês
-   * ("delivered"/"shipped", conforme APILOJAQA.YAML). Resultado: um pedido entregue
-   * exibe o badge DELIVERED, mas a timeline permanece travada em "3. Em Preparação".
-   *
-   * A expectativa abaixo é a CORRETA (comportamento de negócio). Ao corrigir o
-   * front-end, basta remover a chamada test.fixme para o cenário entrar no pipeline.
-   */
   test.fixme(
-    'CT-E2E-CL-03: [Defeito conhecido] Deve concluir a timeline de rastreio para pedido com status delivered',
+    'CT-E2E-CL-03: [Bug conhecido] Deve concluir a timeline de rastreio para pedido com status delivered',
     async ({ clientePage, pedidosDoCliente }) => {
       const pedido = primeiroPedidoComStatus(pedidosDoCliente, ['delivered']);
       test.skip(!pedido, 'Massa sem pedido entregue (delivered) para validar a timeline.');
