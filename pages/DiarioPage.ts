@@ -3,20 +3,6 @@ import { type Locator, type Page } from '@playwright/test';
 /** URL oficial do portal (site público externo à LojaQA). */
 export const URL_DIARIO_DE_PERNAMBUCO = 'https://www.diariodepernambuco.com.br/';
 
-/**
- * Page Object Model — Portal Diario de Pernambuco (site público externo)
- *
- * Boas práticas aplicadas:
- * - Injeção de dependência estrita no construtor: constructor(private page: Page)
- * - Seletores semânticos como primeira escolha (getByRole/getByImg), com
- *   fallback documentado por classe/id da própria aplicação onde ela não expõe
- *   papel ARIA (cards da grid editorial, data de publicação, corpo da matéria).
- * - Nenhuma asserção e nenhuma pausa fixa dentro do Page Object: a espera é
- *   sempre por estado de tela (waitForURL / waitFor / auto-waiting do Playwright).
- * - O Page Object não conhece regras de negócio do teste: expõe leitura de
- *   resultados de busca, dados da matéria (data/autoria) e metadados; quem valida
- *   os valores esperados é o spec.
- */
 export class DiarioPage {
   // --- Identidade do portal (home) ---
   readonly manchetePrincipal: Locator;
@@ -68,26 +54,12 @@ export class DiarioPage {
     this.metaAutor = this.page.locator('meta[name="author"]').first();
   }
 
-  // ---------------------------------------------------------------------------
-  // Navegação
-  // ---------------------------------------------------------------------------
-
-  /**
-   * Abre a home do portal e aguarda a manchete principal (h1) estar renderizada.
-   */
+  /** Abre a home do portal e aguarda a manchete principal (h1) estar renderizada.*/
   async acessarHome(): Promise<void> {
     await this.page.goto(URL_DIARIO_DE_PERNAMBUCO, { waitUntil: 'domcontentloaded' });
     await this.manchetePrincipal.waitFor({ state: 'visible' });
   }
 
-  /**
-   * Dispensa o banner de consentimento de cookies quando ele é exibido.
-   *
-   * O banner é de um serviço de terceiro (WP Cookie Consent) e aparece de forma
-   * intermitente; quando surge, é uma camada flutuante que pode interceptar
-   * cliques nos links do portal. Não há asserção sobre ele: é apenas higiene de
-   * sessão para manter a navegação determinística.
-   */
   async dispensarAvisoDeCookies(): Promise<void> {
     try {
       await this.botaoAceitarCookies.waitFor({ state: 'visible', timeout: 4_000 });
@@ -99,14 +71,8 @@ export class DiarioPage {
       await this.avisoDeCookies.evaluate((elemento) => elemento.remove()).catch(() => undefined);
     }
   }
-
-  // ---------------------------------------------------------------------------
-  // Busca do portal
-  // ---------------------------------------------------------------------------
-
-  /**
-   * Abre o formulário de busca do cabeçalho e aguarda o campo ficar visível.
-   */
+  
+  /** Abre o formulário de busca do cabeçalho e aguarda o campo ficar visível.*/
   async abrirBusca(): Promise<void> {
     await this.botaoAbrirBusca.click();
     await this.campoBusca.waitFor({ state: 'visible' });
@@ -143,13 +109,6 @@ export class DiarioPage {
     return this.page.locator(`a.gs-title[href*="${trechoUrl}"]`).filter({ visible: true }).first();
   }
 
-  /**
-   * Abre um resultado da busca e devolve um Page Object apontando para a aba da matéria.
-   *
-   * Os resultados do Google Programmable Search são abertos com target="_blank";
-   * por isso capturamos a nova aba do contexto antes de clicar, em vez de assumir
-   * que a navegação ocorre na aba atual.
-   */
   async abrirResultadoDaBusca(trechoUrl: string): Promise<DiarioPage> {
     const resultado = this.obterResultadoDaBuscaPorUrl(trechoUrl);
     await resultado.waitFor({ state: 'visible' });
@@ -166,28 +125,18 @@ export class DiarioPage {
     return paginaDaMateria;
   }
 
-  // ---------------------------------------------------------------------------
-  // Leitura da matéria
-  // ---------------------------------------------------------------------------
-
-  /**
-   * Texto exibido na assinatura do autor (ex.: 'Estadão Conteúdo').
-   */
+  /** Texto exibido na assinatura do autor (ex.: 'Estadão Conteúdo').*/
   async obterAssinaturaDoAutor(): Promise<string[]> {
     const textos = await this.assinaturaAutor.allInnerTexts();
     return textos.map((texto) => texto.trim()).filter(Boolean);
   }
 
-  /**
-   * URL atual da página representada por este Page Object.
-   */
+  /** URL atual da página representada por este Page Object.*/
   obterUrlAtual(): string {
     return this.page.url();
   }
 
-  /**
-   * Fecha a aba atual (usado para encerrar abas abertas pela busca).
-   */
+  /** Fecha a aba atual (usado para encerrar abas abertas pela busca).*/
   async fecharAba(): Promise<void> {
     await this.page.close();
   }
