@@ -1,18 +1,5 @@
 import { type Locator, type Page } from '@playwright/test';
 
-/**
- * Page Object Model — Módulo Painel do Cliente: Pedidos & Rastreio (LojaQA)
- *
- * Boas práticas aplicadas:
- * - Injeção de dependência estrita no construtor: constructor(private page: Page)
- * - Seletores semânticos (getByRole, getByText, getByLabel) como primeira escolha.
- *   Fallback documentado por classe/id SOMENTE em elementos que a aplicação expõe
- *   sem papel ARIA próprio (indicadores do stepper, valores monetários do modal).
- * - Nenhuma asserção e nenhuma pausa fixa dentro do Page Object
- *   (validações ficam exclusivamente nos arquivos *.spec.ts).
- * - Sincronização reativa por estado de tela e eventos de rede (waitForURL,
- *   waitForResponse, waitFor), nunca por sleep.
- */
 export class ClientePage {
   // --- Autenticação (login.html) ---
   readonly campoEmailLogin: Locator;
@@ -110,13 +97,7 @@ export class ClientePage {
       .getByRole('button', { name: 'Fechar' });
   }
 
-  // ---------------------------------------------------------------------------
-  // Autenticação e sessão
-  // ---------------------------------------------------------------------------
-
-  /**
-   * Navega para a página de login da LojaQA.
-   */
+  /** Navega para a página de login da LojaQA. */
   async irParaLogin(): Promise<void> {
     await this.page.goto('login.html');
   }
@@ -142,7 +123,7 @@ export class ClientePage {
     await this.tituloPainel.waitFor({ state: 'visible' });
     await respostaPedidos;
 
-    // Determinismo: só devolve o controle quando a listagem terminou de renderizar.
+    // Só devolve o controle quando a listagem terminou de renderizar.
     await this.listaPedidos
       .first()
       .or(this.estadoVazioPedidos)
@@ -150,65 +131,45 @@ export class ClientePage {
       .waitFor({ state: 'visible', timeout: 45_000 });
   }
 
-  /**
-   * Executa a saída segura e devolve a aplicação ao estado deslogado (vitrine).
-   */
+  /** Executa a saída segura e devolve a aplicação ao estado deslogado (vitrine).*/
   async logout(): Promise<void> {
     await this.botaoLogout.click();
     await this.page.waitForURL('**/loja.html');
   }
 
-  /**
-   * Aciona o atalho de menu "Meus Pedidos" e aguarda o título da seção ficar visível.
-   */
+  /** Aciona o atalho de menu "Meus Pedidos" e aguarda o título da seção ficar visível.*/
   async acessarModuloPedidos(): Promise<void> {
     await this.linkMenuMeusPedidos.click();
     await this.tituloMeusPedidos.waitFor({ state: 'visible' });
   }
 
-  // ---------------------------------------------------------------------------
-  // Listagem de pedidos
-  // ---------------------------------------------------------------------------
-
   /**
    * Localiza a linha (article) de um pedido na listagem pelo ObjectId cru
-   * exibido no badge de identificação — chave inequívoca do registro.
+   * exibido no badge de identificação.
    */
   obterLinhaPedidoPorIdApi(idApi: string): Locator {
     return this.listaPedidos.filter({ has: this.page.getByText(idApi, { exact: true }) });
   }
 
-  /**
-   * Localiza a linha do pedido pela posição na listagem (0 = mais recente).
-   */
+  /** Localiza a linha do pedido pela posição na listagem (0 = mais recente). */
   obterLinhaPedidoPorPosicao(indice: number): Locator {
     return this.listaPedidos.nth(indice);
   }
 
-  /**
-   * Identificador visual amigável do pedido (padrão PED-00000) dentro da linha.
-   */
+  /** Identificador visual amigável do pedido (padrão PED-00000) dentro da linha.*/
   obterIdVisualPedido(linha: Locator): Locator {
     return linha.getByText(/^PED-\d{5}$/);
   }
 
-  /**
-   * Badge de status exibido na linha da listagem (ex.: PENDING, DELIVERED).
-   */
+  /** Badge de status exibido na linha da listagem (ex.: PENDING, DELIVERED).*/
   obterStatusPedidoNaLinha(linha: Locator): Locator {
     return linha.locator('.status');
   }
 
-  /**
-   * Botão de ação "Ver Detalhes" da linha do pedido.
-   */
+  /** Botão de ação "Ver Detalhes" da linha do pedido.*/
   obterBotaoVerDetalhes(linha: Locator): Locator {
     return linha.getByRole('button', { name: /Ver Detalhes/i });
   }
-
-  // ---------------------------------------------------------------------------
-  // Modal de detalhes, rastreio e comprovante
-  // ---------------------------------------------------------------------------
 
   /**
    * Abre o modal de detalhes de um pedido a partir da listagem e aguarda a
@@ -222,9 +183,7 @@ export class ClientePage {
     await this.stepperRastreio.waitFor({ state: 'visible' });
   }
 
-  /**
-   * Fecha o modal de detalhes pelo botão de rodapé "Fechar".
-   */
+  /** Fecha o modal de detalhes pelo botão de rodapé "Fechar".*/
   async fecharDetalhesDoPedido(): Promise<void> {
     await this.botaoFecharModal.click();
     await this.modalDetalhesPedido.waitFor({ state: 'hidden' });
@@ -238,9 +197,7 @@ export class ClientePage {
     return this.passosRastreio.filter({ hasText: rotulo });
   }
 
-  /**
-   * Marca (bolinha) de um passo da timeline — alvo da validação visual do stepper.
-   */
+  /** Marca (bolinha) de um passo da timeline — alvo da validação visual do stepper.*/
   obterMarcadorDoPasso(passo: Locator): Locator {
     return passo.locator('.dot');
   }
@@ -262,32 +219,24 @@ export class ClientePage {
     });
   }
 
-  /**
-   * Aciona o botão "Imprimir Comprovante" do modal de detalhes do pedido.
-   */
+  /** Aciona o botão "Imprimir Comprovante" do modal de detalhes do pedido.*/
   async imprimirComprovante(): Promise<void> {
     await this.botaoImprimirComprovante.click();
   }
 
-  /**
-   * Quantidade de vezes que window.print() foi disparado na página.
-   */
+  /** Quantidade de vezes que window.print() foi disparado na página.*/
   async contarImpressoesDisparadas(): Promise<number> {
     return this.page.evaluate(
       () => (window as unknown as { __impressoesDisparadas?: number }).__impressoesDisparadas ?? 0
     );
   }
 
-  /**
-   * Emula a mídia de impressão (equivalente ao "Visualizar impressão" do navegador).
-   */
+  /** Emula a mídia de impressão (equivalente ao "Visualizar impressão" do navegador).*/
   async emularMidiaDeImpressao(): Promise<void> {
     await this.page.emulateMedia({ media: 'print' });
   }
 
-  /**
-   * Restaura a emulação para a mídia de tela.
-   */
+  /** Restaura a emulação para a mídia de tela.*/
   async restaurarMidiaDeTela(): Promise<void> {
     await this.page.emulateMedia({ media: 'screen' });
   }
