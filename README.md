@@ -355,6 +355,7 @@ Traduzir o status antes de comparar, em vez de procurar texto escrito na tela:
 
 ```js
 const ETAPA_POR_STATUS = { pending: 3, paid: 3, shipped: 4, delivered: 5, cancelled: 0 };
+```
 
 ### Observação técnica — classe CSS do badge de status
 
@@ -370,7 +371,6 @@ Em `openOrderModal()` o badge recebe `className = 'status blocked'` de forma fix
 
 | Decisão | Justificativa |
 |---|---|
-| **Sem Teardown nesta suíte** | O domínio de pedidos não permite exclusão (`DELETE /orders/:id` → `404`) e criar pedidos decrementa estoque real. Por isso a suíte é **read-only**: usa o histórico existente e cruza **UI × API**, mantendo idempotência sem poluir o ambiente da turma. O padrão Teardown permanece documentado na seção 1 como contraponto de arquitetura. |
 | **Massa dinâmica em vez de dados "chumbados"** | IDs, valores e status são lidos de `GET /orders/me` no fixture. Se a turma gerar novos pedidos, os testes continuam válidos sem manutenção. |
 | **`window.print()` instrumentado** | Sem o stub, o clique em `Imprimir Comprovante` abre o diálogo nativo do SO e trava a execução headless. O contador captura o disparo e permite afirmar "exatamente 1 impressão". |
 | **`emulateMedia({ media: 'print' })`** | Recurso nativo do Playwright que reproduz o "Visualizar impressão" sem depender de driver de impressora física. |
