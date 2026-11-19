@@ -1,23 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { DiarioPage } from '../../pages/DiarioPage';
 
-/**
- * UI Externa (E2E) — Portal Diario de Pernambuco
- *
- * Cenário: **busca de conteúdo** — o leitor usa o campo de pesquisa do portal
- * para localizar uma publicação específica e conferir, na matéria aberta, a
- * data de publicação e a autoria (a assinatura do conteúdo).
- *
- * Por que este fluxo importa: a busca é a porta de entrada de quem procura um
- * fato já noticiado. Se ela devolve o link errado, engole um resultado ou abre
- * uma matéria com data/autor incorretos, a credibilidade editorial do veículo
- * (e a rastreabilidade da fonte) fica comprometida.
- *
- * O cenário é read-only: não cria conta, não comenta e não assina nada. Os
- * valores de referência são fixos de propósito — trata-se de uma verificação de
- * regressão de uma publicação já existente, cujo conteúdo não deve mudar.
- */
-
 /** Matéria de referência do cenário de busca (conteúdo fixo, já publicado). */
 const MATERIA_ALVO = {
   id: '11729214',
